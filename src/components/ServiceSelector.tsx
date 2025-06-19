@@ -15,11 +15,11 @@ const ServiceSelector = ({ services, onServiceSelect }: ServiceSelectorProps) =>
       {services.map((service, index) => (
         <Card 
           key={service.id} 
-          className="hover:shadow-xl transition-all duration-300 hover-scale border-2 hover:border-blue-200 cursor-pointer group"
+          className="hover:shadow-xl transition-all duration-300 hover-scale border-2 hover:border-indigo-200 cursor-pointer group bg-gradient-to-br from-white to-slate-50"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <CardHeader>
-            <CardTitle className="text-xl text-gray-900 group-hover:text-blue-600 transition-colors">
+            <CardTitle className="text-xl text-gray-900 group-hover:text-indigo-600 transition-colors">
               {service.name}
             </CardTitle>
             <CardDescription className="text-gray-600">
@@ -34,12 +34,12 @@ const ServiceSelector = ({ services, onServiceSelect }: ServiceSelectorProps) =>
               </div>
               <div className="flex items-center text-lg font-semibold text-gray-900">
                 <DollarSign className="h-5 w-5 mr-1" />
-                {service.price}
+                €{service.price}
               </div>
             </div>
             <Button 
               onClick={() => onServiceSelect(service)}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-300"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all duration-300"
             >
               Book This Service
             </Button>

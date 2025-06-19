@@ -19,28 +19,28 @@ const services: Service[] = [
     id: 'consultation',
     name: 'Initial Consultation',
     duration: 60,
-    price: 150,
+    price: 135,
     description: 'Comprehensive assessment and strategy planning session'
   },
   {
     id: 'strategy',
     name: 'Strategy Session',
     duration: 90,
-    price: 250,
+    price: 225,
     description: 'Deep-dive strategic planning and roadmap development'
   },
   {
     id: 'review',
     name: 'Progress Review',
     duration: 45,
-    price: 120,
+    price: 110,
     description: 'Review current progress and adjust strategies'
   },
   {
     id: 'workshop',
     name: 'Team Workshop',
     duration: 120,
-    price: 400,
+    price: 360,
     description: 'Interactive workshop for teams and groups'
   }
 ];
@@ -60,19 +60,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
-              <Calendar className="h-8 w-8 text-blue-600" />
+              <Calendar className="h-8 w-8 text-indigo-600" />
               <h1 className="text-2xl font-bold text-gray-900">BookPro Agency</h1>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#services" className="text-gray-600 hover:text-blue-600 transition-colors">Services</a>
-              <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
-              <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
+              <a href="#services" className="text-gray-600 hover:text-indigo-600 transition-colors">Services</a>
+              <a href="#about" className="text-gray-600 hover:text-indigo-600 transition-colors">About</a>
+              <a href="#contact" className="text-gray-600 hover:text-indigo-600 transition-colors">Contact</a>
             </nav>
           </div>
         </div>
@@ -86,7 +86,7 @@ const Index = () => {
               <div className="text-center animate-fade-in">
                 <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                   Book Your
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
                     {" "}Success
                   </span>
                 </h2>
@@ -97,13 +97,13 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
                     onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     Book Now <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <div className="flex items-center text-sm text-gray-500">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    <CheckCircle className="h-4 w-4 text-emerald-500 mr-2" />
                     Free cancellation up to 24 hours
                   </div>
                 </div>
@@ -111,7 +111,7 @@ const Index = () => {
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute top-20 left-10 w-20 h-20 bg-indigo-200 rounded-full opacity-20 animate-pulse"></div>
             <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
           </section>
 
@@ -119,10 +119,10 @@ const Index = () => {
           <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/50">
             <div className="max-w-7xl mx-auto">
               <div className="grid md:grid-cols-3 gap-8">
-                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale">
+                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale border-2 border-indigo-100 hover:border-indigo-200">
                   <CardHeader>
-                    <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                      <Calendar className="h-6 w-6 text-blue-600" />
+                    <div className="mx-auto w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                      <Calendar className="h-6 w-6 text-indigo-600" />
                     </div>
                     <CardTitle>Easy Scheduling</CardTitle>
                   </CardHeader>
@@ -133,7 +133,7 @@ const Index = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale">
+                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale border-2 border-purple-100 hover:border-purple-200">
                   <CardHeader>
                     <div className="mx-auto w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                       <Clock className="h-6 w-6 text-purple-600" />
@@ -147,10 +147,10 @@ const Index = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale">
+                <Card className="text-center hover:shadow-lg transition-all duration-300 hover-scale border-2 border-emerald-100 hover:border-emerald-200">
                   <CardHeader>
-                    <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                      <Users className="h-6 w-6 text-green-600" />
+                    <div className="mx-auto w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                      <Users className="h-6 w-6 text-emerald-600" />
                     </div>
                     <CardTitle>Expert Team</CardTitle>
                   </CardHeader>
