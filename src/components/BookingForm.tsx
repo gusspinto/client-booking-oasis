@@ -9,10 +9,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarIcon, Clock, DollarSign, User, Mail, Phone, MessageSquare, CalendarPlus } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { CalendarIcon, Clock, DollarSign, User, Mail, Phone, MessageSquare, CalendarPlus, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BookingFormProps {
   service: Service;
@@ -35,7 +37,9 @@ const BookingForm = ({ service }: BookingFormProps) => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -80,8 +84,8 @@ const BookingForm = ({ service }: BookingFormProps) => {
     
     if (!date || !time) {
       toast({
-        title: "Missing Information",
-        description: "Please select a date and time for your appointment.",
+        title: t('booking.missing.title'),
+        description: t('booking.missing.datetime'),
         variant: "destructive"
       });
       return;
@@ -89,8 +93,8 @@ const BookingForm = ({ service }: BookingFormProps) => {
 
     if (!formData.firstName || !formData.lastName || !formData.email) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: t('booking.missing.title'),
+        description: t('booking.missing.fields'),
         variant: "destructive"
       });
       return;
@@ -100,23 +104,33 @@ const BookingForm = ({ service }: BookingFormProps) => {
 
     // Simulate API call
     setTimeout(() => {
-      toast({
-        title: "Booking Confirmed!",
-        description: `Your ${service.name} appointment has been scheduled for ${format(date, 'MMMM d, yyyy')} at ${time}.`
-      });
-      
-      // Reset form
-      setDate(undefined);
-      setTime(undefined);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        message: ''
-      });
       setIsSubmitting(false);
+      setShowConfirmation(true);
     }, 2000);
+  };
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+    
+    // Reset form
+    setDate(undefined);
+    setTime(undefined);
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      message: ''
+    });
+
+    toast({
+      title: t('booking.confirmed.title'),
+      description: t('booking.confirmed.desc', { 
+        service: service.name, 
+        date: date ? format(date, 'MMMM d, yyyy') : '', 
+        time: time || '' 
+      })
+    });
   };
 
   return (
@@ -130,7 +144,7 @@ const BookingForm = ({ service }: BookingFormProps) => {
           <div className="flex gap-4 mt-4">
             <div className="flex items-center text-gray-600">
               <Clock className="h-5 w-5 mr-2" />
-              {service.duration} minutes
+              {service.duration} {t('services.minutes')}
             </div>
             <div className="flex items-center text-gray-900 font-semibold">
               <DollarSign className="h-5 w-5 mr-2" />
@@ -147,12 +161,12 @@ const BookingForm = ({ service }: BookingFormProps) => {
             <CardHeader>
               <CardTitle className="flex items-center text-indigo-700">
                 <CalendarIcon className="h-5 w-5 mr-2" />
-                Select Date & Time
+                {t('booking.datetime.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>Choose Date</Label>
+                <Label>{t('booking.date.label')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -163,7 +177,7 @@ const BookingForm = ({ service }: BookingFormProps) => {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : "Pick a date"}
+                      {date ? format(date, "PPP") : t('booking.date.placeholder')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -180,10 +194,10 @@ const BookingForm = ({ service }: BookingFormProps) => {
               </div>
 
               <div>
-                <Label>Choose Time</Label>
+                <Label>{t('booking.time.label')}</Label>
                 <Select value={time} onValueChange={setTime}>
                   <SelectTrigger className="mt-2 border-indigo-200 hover:border-indigo-300">
-                    <SelectValue placeholder="Select a time slot" />
+                    <SelectValue placeholder={t('booking.time.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {timeSlots.map((slot) => (
@@ -202,13 +216,13 @@ const BookingForm = ({ service }: BookingFormProps) => {
             <CardHeader>
               <CardTitle className="flex items-center text-purple-700">
                 <User className="h-5 w-5 mr-2" />
-                Your Information
+                {t('booking.info.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">First Name *</Label>
+                  <Label htmlFor="firstName">{t('booking.firstName')} *</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
@@ -218,7 +232,7 @@ const BookingForm = ({ service }: BookingFormProps) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Label htmlFor="lastName">{t('booking.lastName')} *</Label>
                   <Input
                     id="lastName"
                     value={formData.lastName}
@@ -230,7 +244,7 @@ const BookingForm = ({ service }: BookingFormProps) => {
               </div>
 
               <div>
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">{t('booking.email')} *</Label>
                 <div className="relative mt-2">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -245,7 +259,7 @@ const BookingForm = ({ service }: BookingFormProps) => {
               </div>
 
               <div>
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t('booking.phone')}</Label>
                 <div className="relative mt-2">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -266,17 +280,17 @@ const BookingForm = ({ service }: BookingFormProps) => {
           <CardHeader>
             <CardTitle className="flex items-center text-cyan-700">
               <MessageSquare className="h-5 w-5 mr-2" />
-              Additional Information
+              {t('booking.additional.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="message">Tell us about your goals or any specific requirements</Label>
+            <Label htmlFor="message">{t('booking.message.label')}</Label>
             <Textarea
               id="message"
               value={formData.message}
               onChange={(e) => handleInputChange('message', e.target.value)}
               className="mt-2 min-h-[100px] border-cyan-200 focus:border-cyan-400"
-              placeholder="Share any additional details that will help us prepare for your session..."
+              placeholder={t('booking.message.placeholder')}
             />
           </CardContent>
         </Card>
@@ -287,38 +301,68 @@ const BookingForm = ({ service }: BookingFormProps) => {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h4 className="font-semibold text-lg text-gray-900">Ready to book?</h4>
-                  <p className="text-gray-600">You'll receive a confirmation email shortly.</p>
+                  <h4 className="font-semibold text-lg text-gray-900">{t('booking.ready.title')}</h4>
+                  <p className="text-gray-600">{t('booking.ready.subtitle')}</p>
                 </div>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Booking...' : `Book Appointment - €${service.price}`}
+                  {isSubmitting ? t('booking.submitting') : `${t('services.book')} - €${service.price}`}
                 </Button>
               </div>
-              
-              {date && time && (
-                <div className="pt-4 border-t border-emerald-200">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => window.open(generateGoogleCalendarUrl(), '_blank')}
-                    className="w-full sm:w-auto border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-                  >
-                    <CalendarPlus className="h-4 w-4 mr-2" />
-                    Add to Google Calendar
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Complete your booking first, then add to your calendar
-                  </p>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
       </form>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-8 w-8 text-emerald-600" />
+            </div>
+            <DialogTitle className="text-2xl text-emerald-600">
+              {t('booking.confirmation.title')}
+            </DialogTitle>
+            <DialogDescription className="text-lg text-gray-600 mt-2">
+              {t('booking.confirmation.email')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-6">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-900 mb-2">{t('booking.confirmation.details')}</h4>
+              <div className="space-y-1 text-sm text-gray-600">
+                <p><strong>{t('booking.confirmation.service')}:</strong> {service.name}</p>
+                <p><strong>{t('booking.confirmation.date')}:</strong> {date ? format(date, 'MMMM d, yyyy') : ''}</p>
+                <p><strong>{t('booking.confirmation.time')}:</strong> {time}</p>
+                <p><strong>{t('booking.confirmation.client')}:</strong> {formData.firstName} {formData.lastName}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => window.open(generateGoogleCalendarUrl(), '_blank')}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+              >
+                <CalendarPlus className="h-4 w-4 mr-2" />
+                {t('booking.confirmation.calendar')}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={handleCloseConfirmation}
+                className="w-full"
+              >
+                {t('booking.confirmation.close')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
