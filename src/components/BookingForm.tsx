@@ -51,32 +51,52 @@ const BookingForm = ({ service }: BookingFormProps) => {
   const generateGoogleCalendarUrl = () => {
     if (!date || !time) return '';
 
-    const startDateTime = new Date(date);
+    // Create a new date object for the appointment
+    const appointmentDate = new Date(date);
     const [hours, minutes] = time.split(':').map(Number);
-    startDateTime.setHours(hours, minutes, 0, 0);
+    
+    // Set the time for the appointment
+    appointmentDate.setHours(hours, minutes, 0, 0);
+    
+    // Create end time by adding service duration
+    const endDate = new Date(appointmentDate);
+    endDate.setMinutes(endDate.getMinutes() + service.duration);
 
-    const endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(endDateTime.getMinutes() + service.duration);
-
-    const formatDate = (date: Date) => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ)
+    const formatGoogleDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}${month}${day}T${hours}${minutes}00`;
     };
 
+    const startTime = formatGoogleDate(appointmentDate);
+    const endTime = formatGoogleDate(endDate);
+
+    // Create the event details
     const eventTitle = encodeURIComponent(`${service.name} - BookPro Agency`);
     const eventDetails = encodeURIComponent(
-      `Service: ${service.name}\n` +
-      `Duration: ${service.duration} minutes\n` +
-      `Price: €${service.price}\n` +
-      `Client: ${formData.firstName} ${formData.lastName}\n` +
+      `Serviço: ${service.name}\n` +
+      `Duração: ${service.duration} minutos\n` +
+      `Preço: €${service.price}\n` +
+      `Cliente: ${formData.firstName} ${formData.lastName}\n` +
       `Email: ${formData.email}\n` +
-      `Phone: ${formData.phone}\n` +
-      `${formData.message ? `Notes: ${formData.message}` : ''}`
+      `Telefone: ${formData.phone}\n` +
+      `${formData.message ? `Notas: ${formData.message}` : ''}`
     );
 
-    const startTime = formatDate(startDateTime);
-    const endTime = formatDate(endDateTime);
+    const baseUrl = 'https://calendar.google.com/calendar/render';
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: service.name + ' - BookPro Agency',
+      dates: `${startTime}/${endTime}`,
+      details: `Serviço: ${service.name}\nDuração: ${service.duration} minutos\nPreço: €${service.price}\nCliente: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email}\nTelefone: ${formData.phone}${formData.message ? `\nNotas: ${formData.message}` : ''}`,
+      location: 'BookPro Agency'
+    });
 
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${startTime}/${endTime}&details=${eventDetails}`;
+    return `${baseUrl}?${params.toString()}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -345,8 +365,15 @@ const BookingForm = ({ service }: BookingFormProps) => {
 
             <div className="flex flex-col gap-3">
               <Button
-                onClick={() => window.open(generateGoogleCalendarUrl(), '_blank')}
+                onClick={() => {
+                  const calendarUrl = generateGoogleCalendarUrl();
+                  console.log('Generated Calendar URL:', calendarUrl);
+                  if (calendarUrl) {
+                    window.open(calendarUrl, '_blank');
+                  }
+                }}
                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                disabled={!date || !time}
               >
                 <CalendarPlus className="h-4 w-4 mr-2" />
                 {t('booking.confirmation.calendar')}
